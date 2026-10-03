@@ -1,13 +1,11 @@
-﻿using BepInEx;
+using AOSix.Patches;
+using AOSix.Source;
+using BepInEx;
 using BepInEx.Logging;
-using SPTAOReplacer.ExamplePatches;
-using SPTAOReplacer.Patches;
-using UnityEngine;
-using UnityEngine.Rendering;
 
-namespace SPTAOReplacer
+namespace AOSix
 {
-    [BepInPlugin("com.matsix.sptaoreplacer", "SPTAOReplacer", "1.0.3")]
+    [BepInPlugin("com.matsix.aosix", "AOSix", "2.0.0")]
     public class Plugin : BaseUnityPlugin
     {
         public static ManualLogSource MyLog;
@@ -15,11 +13,15 @@ namespace SPTAOReplacer
         private void Awake()
         {
             MyLog = Logger;
-            MyLog.LogInfo("plugin loaded!");
+            AoConfig.Bind(Config);
 
             new SetSSAOPatch().Enable();
-            new AOInitTimer().Enable();
-            new AOInitialize().Enable();
+            new AmbientLightInitPatch().Enable();
+
+            AoConfig.Enabled.SettingChanged += (_, __) => { SetSSAOPatch.Reapply(); AoAmbient.ApplyAll(); };
+            AoConfig.OccludeCustomAmbient.SettingChanged += (_, __) => AoAmbient.ApplyAll();
+
+            MyLog.LogInfo("AOSix loaded!");
         }
     }
 }

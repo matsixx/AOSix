@@ -1,16 +1,25 @@
-**AO Replacer**
+**AOSix**
 
-This is a total replacement of Tarkov's built in AO. Tarkov uses an AO method caled "HBAO" or horizon based ambient occlusion. This replacer uses "GTAO" or ground truth ambient occlusion. GTAO is a more modern and accurate method of calculating ambient occlusion.
+A total replacement of Tarkov's ambient occlusion (formerly "AO Replacer", which used Amplify Occlusion).
 
-There isn't any configuration on this currently, possibly in the future. It just takes over the AO settings in graphics settings of Tarkov.
+- **Visibility-bitmask GTAO** — ground-truth AO where occluders have a finite thickness (Therrien et al. 2023,
+  the method behind Blender EEVEE-Next's AO), on Intel XeGTAO's production recipe: a depth MIP pyramid,
+  pixel-snapped sampling, multi-bounce, and an edge-aware denoise. Plain GTAO/HBAO treat every occluder as
+  infinitely thick, which darkens the ground behind grass, poles and your gun; this doesn't.
+- **Fixes EFT's Custom Ambient ignoring AO.** EFT adds its sky ambient in a late pass that only lets AO
+  touch reflections, so the diffuse ambient washed out any AO (vanilla's too). AOSix swaps in a faithful port
+  of that pass with the ambient occluded. Toggle "Occlude Custom Ambient" to compare.
+- No temporal filtering (no ghosting). Works flatscreen and in SPT-VR (per-eye; SPT-VR's built-in AO steps
+  aside when AOSix is installed).
 
-**NOTE: Colored Ultra AO currently does the same as just Ultra in this mod since this GTAO doesn't have an equivalent**
+Quality follows the in-game SSAO setting (Off disables it; Colored Highest Quality tints the bounce light by
+surface color). Intensity, radius, thickness and fade distance are in the F12 config menu.
 
-To install, just copy the contents of the "AOReplacer" folder into your SPT directory.
+To install, copy the `AOSix` folder (DLL + `Assets/aosix`) into `BepInEx/plugins`.
 
-This is compatible with Hollywood FX/Graphics but the ambient occlusion settings in that mod will be ignored in favor of this one. Hollywood Graphics uses the built in AO, this replaces that AO. Double ambient occlusion is bad so I want to avoid that happening.
+Compatible with Hollywood FX/Graphics, but its AO settings are ignored in favor of this one (double AO is bad).
 
 Support my work on Ko-fi: https://ko-fi.com/matsix
 
-
-Credits: AmplifyCreations - https://github.com/AmplifyCreations/AmplifyOcclusion
+**Building:** `dotnet build -c Release` (deploys to `F:\SPT4.1\BepInEx\plugins\AOSix`). The shaders in `Assets/`
+go in the `aosix` AssetBundle (Unity project copy under `Assets/Volumetric clouds/`, bundle-labeled).

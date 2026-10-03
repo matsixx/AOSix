@@ -2,3 +2,10 @@ bin/
 obj/
 /.vs
 /libs
+
+# Shader sources are private: they live only in the Unity project and ship compiled in the bundles.
+*.shader
+*.cginc
+*.hlsl
+*.compute
+*ShaderPatcher*.cs
